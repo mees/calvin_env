@@ -7,9 +7,8 @@ import gym
 try:
     from lfp.datasets.utils.episode_utils import process_actions, process_depth, process_rgb, process_state
 except ImportError:
-    from calvin.datasets.utils.episode_utils import process_actions, process_depth, process_rgb, process_state
+    from calvin_models.calvin_agent.datasets.utils.episode_utils import process_actions, process_depth, process_rgb, process_state
 import numpy as np
-from omegaconf import DictConfig
 import torch
 
 from calvin_env.envs.play_table_env import get_env
