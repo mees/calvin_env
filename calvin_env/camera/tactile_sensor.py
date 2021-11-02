@@ -2,9 +2,9 @@ import os
 
 import numpy as np
 import pybullet as p
-import tacto
 
 from calvin_env.camera.camera import Camera
+import tacto
 
 REPO_BASE = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 

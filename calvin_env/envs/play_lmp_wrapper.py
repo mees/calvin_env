@@ -7,7 +7,12 @@ import gym
 try:
     from lfp.datasets.utils.episode_utils import process_actions, process_depth, process_rgb, process_state
 except ImportError:
-    from calvin_models.calvin_agent.datasets.utils.episode_utils import process_actions, process_depth, process_rgb, process_state
+    from calvin_models.calvin_agent.datasets.utils.episode_utils import (
+        process_actions,
+        process_depth,
+        process_rgb,
+        process_state,
+    )
 import numpy as np
 import torch
 
@@ -20,7 +25,9 @@ logger = logging.getLogger(__name__)
 class PlayLMPWrapper(gym.Wrapper):
     def __init__(self, dataset_loader, device, show_gui=False, **kwargs):
         self.set_egl_device(device)
-        env = get_env(dataset_loader.abs_datasets_dir, show_gui=show_gui, **kwargs)
+        env = get_env(
+            dataset_loader.abs_datasets_dir, show_gui=show_gui, obs_space=dataset_loader.observation_space, **kwargs
+        )
         super(PlayLMPWrapper, self).__init__(env)
         self.observation_space_keys = dataset_loader.observation_space
         self.transforms = dataset_loader.transforms

@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import pickle
 import pkgutil
+import re
 import sys
 import time
 
@@ -260,14 +261,18 @@ class PlayTableSimEnv(gym.Env):
         return data
 
 
-def get_env(dataset_path, show_gui=True, **kwargs):
+def get_env(dataset_path, obs_space, show_gui=True, **kwargs):
     from pathlib import Path
 
     from omegaconf import OmegaConf
 
     render_conf = OmegaConf.load(Path(dataset_path) / ".hydra" / "merged_config.yaml")
-    if "cameras" in kwargs:
-        OmegaConf.update(render_conf, "cameras", kwargs["cameras"], merge=False)
+
+    exclude_keys = set(render_conf.cameras.keys()) - {
+        re.split("_", key)[1] for key in obs_space["rgb_obs"] + obs_space["depth_obs"]
+    }
+    for k in exclude_keys:
+        del render_conf.cameras[k]
     if "scene" in kwargs:
         scene_cfg = OmegaConf.load(Path(calvin_env.__file__).parents[1] / "conf/scene" / f"{kwargs['scene']}.yaml")
         OmegaConf.merge(render_conf, scene_cfg)
