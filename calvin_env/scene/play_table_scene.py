@@ -86,7 +86,7 @@ class PlayTableScene:
                 if button_switch.effect == light.name:
                     button_switch.add_effect(light)
 
-        self.p.loadURDF(os.path.join(self.data_path, "plane.urdf"), physicsClientId=self.cid)
+        self.p.loadURDF(os.path.join(self.data_path, "plane/plane.urdf"), physicsClientId=self.cid)
 
     def reset(self, scene_obs=None):
         """Reset objects and doors to initial position."""
