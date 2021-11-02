@@ -12,4 +12,3 @@ opencv-python
 pybullet
 scipy
 pandas
-tacto
