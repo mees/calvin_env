@@ -7,7 +7,7 @@ import gym
 try:
     from lfp.datasets.utils.episode_utils import process_actions, process_depth, process_rgb, process_state
 except ImportError:
-    from calvin_models.calvin_agent.datasets.utils.episode_utils import (
+    from calvin_agent.datasets.utils.episode_utils import (
         process_actions,
         process_depth,
         process_rgb,
@@ -63,9 +63,9 @@ class PlayLMPWrapper(gym.Wrapper):
         rgb_obs = process_rgb(rgb_obs, self.observation_space_keys, self.transforms)
         depth_obs = process_depth(depth_obs, self.observation_space_keys, self.transforms)
 
-        state_obs["robot_obs"] = state_obs["robot_obs"].to(self.device)
-        rgb_obs.update({"rgb_obs": {k: v.to(self.device) for k, v in rgb_obs["rgb_obs"].items()}})
-        depth_obs.update({"depth_obs": {k: v.to(self.device) for k, v in depth_obs["depth_obs"].items()}})
+        state_obs["robot_obs"] = state_obs["robot_obs"].to(self.device).unsqueeze(0)
+        rgb_obs.update({"rgb_obs": {k: v.to(self.device).unsqueeze(0) for k, v in rgb_obs["rgb_obs"].items()}})
+        depth_obs.update({"depth_obs": {k: v.to(self.device).unsqueeze(0) for k, v in depth_obs["depth_obs"].items()}})
 
         return {**rgb_obs, **state_obs, **depth_obs}
 

@@ -153,7 +153,7 @@ class PlayTableSimEnv(gym.Env):
                 log.warning("Environment does not have camera")
                 return
             img = rgb_obs[0][:, :, ::-1]
-            cv2.imshow("simulation cam", img)
+            cv2.imshow("simulation cam", cv2.resize(img, (500, 500)))
             cv2.waitKey(1)
         elif mode == "rgb_array":
             assert len(rgb_obs) > 0, "Environment does not have camera"
@@ -261,21 +261,24 @@ class PlayTableSimEnv(gym.Env):
         return data
 
 
-def get_env(dataset_path, obs_space, show_gui=True, **kwargs):
+def get_env(dataset_path, obs_space=None, show_gui=True, **kwargs):
     from pathlib import Path
 
     from omegaconf import OmegaConf
 
     render_conf = OmegaConf.load(Path(dataset_path) / ".hydra" / "merged_config.yaml")
 
-    exclude_keys = set(render_conf.cameras.keys()) - {
-        re.split("_", key)[1] for key in obs_space["rgb_obs"] + obs_space["depth_obs"]
-    }
-    for k in exclude_keys:
-        del render_conf.cameras[k]
+    if obs_space is not None:
+        exclude_keys = set(render_conf.cameras.keys()) - {
+            re.split("_", key)[1] for key in obs_space["rgb_obs"] + obs_space["depth_obs"]
+        }
+        for k in exclude_keys:
+            del render_conf.cameras[k]
     if "scene" in kwargs:
         scene_cfg = OmegaConf.load(Path(calvin_env.__file__).parents[1] / "conf/scene" / f"{kwargs['scene']}.yaml")
         OmegaConf.merge(render_conf, scene_cfg)
+    if not hydra.core.global_hydra.GlobalHydra.instance().is_initialized():
+        hydra.initialize(".")
     env = hydra.utils.instantiate(render_conf.env, show_gui=show_gui, use_vr=False, use_scene_info=True)
     return env
 
