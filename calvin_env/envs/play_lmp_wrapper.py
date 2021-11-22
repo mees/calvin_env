@@ -4,15 +4,8 @@ from typing import Any, Dict, Tuple, Union
 
 import gym
 
-try:
-    from lfp.datasets.utils.episode_utils import process_actions, process_depth, process_rgb, process_state
-except ImportError:
-    from calvin_agent.datasets.utils.episode_utils import (
-        process_actions,
-        process_depth,
-        process_rgb,
-        process_state,
-    )
+
+from calvin_agent.datasets.utils.episode_utils import process_actions, process_depth, process_rgb, process_state
 import numpy as np
 import torch
 
@@ -54,14 +47,9 @@ class PlayLMPWrapper(gym.Wrapper):
         logger.info(f"EGL_DEVICE_ID {egl_id} <==> CUDA_DEVICE_ID {cuda_id}")
 
     def transform_observation(self, obs: Dict[str, Any]) -> Dict[str, Union[torch.Tensor, Dict[str, torch.Tensor]]]:
-        rgb_obs = {f"rgb_{name}": img for name, img in zip([cam.name for cam in self.env.cameras], obs["rgb_obs"])}
-        depth_obs = {
-            f"depth_{name}": img for name, img in zip([cam.name for cam in self.env.cameras], obs["depth_obs"])
-        }
-
         state_obs = process_state(obs, self.observation_space_keys, self.transforms, self.proprio_state)
-        rgb_obs = process_rgb(rgb_obs, self.observation_space_keys, self.transforms)
-        depth_obs = process_depth(depth_obs, self.observation_space_keys, self.transforms)
+        rgb_obs = process_rgb(obs["rgb_obs"], self.observation_space_keys, self.transforms)
+        depth_obs = process_depth(obs["depth_obs"], self.observation_space_keys, self.transforms)
 
         state_obs["robot_obs"] = state_obs["robot_obs"].to(self.device).unsqueeze(0)
         rgb_obs.update({"rgb_obs": {k: v.to(self.device).unsqueeze(0) for k, v in rgb_obs["rgb_obs"].items()}})

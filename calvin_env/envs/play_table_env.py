@@ -149,15 +149,15 @@ class PlayTableSimEnv(gym.Env):
         """render is gym compatibility function"""
         rgb_obs, depth_obs = self.get_camera_obs()
         if mode == "human":
-            if len(rgb_obs) == 0:
-                log.warning("Environment does not have camera")
+            if "rgb_static" not in rgb_obs:
+                log.warning("Environment does not have static camera")
                 return
-            img = rgb_obs[0][:, :, ::-1]
+            img = rgb_obs["rgb_static"][:, :, ::-1]
             cv2.imshow("simulation cam", cv2.resize(img, (500, 500)))
             cv2.waitKey(1)
         elif mode == "rgb_array":
-            assert len(rgb_obs) > 0, "Environment does not have camera"
-            return rgb_obs[0]
+            assert "rgb_static" in rgb_obs, "Environment does not have static camera"
+            return rgb_obs["rgb_static"]
         else:
             raise NotImplementedError
 
@@ -177,12 +177,12 @@ class PlayTableSimEnv(gym.Env):
 
     def get_camera_obs(self):
         assert self.cameras is not None
-        rgb_obs = []
-        depth_obs = []
+        rgb_obs = {}
+        depth_obs = {}
         for cam in self.cameras:
             rgb, depth = cam.render()
-            rgb_obs.append(rgb)
-            depth_obs.append(depth)
+            rgb_obs[f"rgb_{cam.name}"] = rgb
+            depth_obs[f"depth_{cam.name}"] = depth
         return rgb_obs, depth_obs
 
     def get_obs(self):
