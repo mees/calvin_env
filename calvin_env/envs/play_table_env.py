@@ -140,8 +140,8 @@ class PlayTableSimEnv(gym.Env):
         if self.ownsPhysicsClient:
             print("disconnecting id %d from server" % self.cid)
             if self.cid >= 0:
-                self.p.disconnect(physicsClientId=self.cid)
-            self.cid = -1
+              self.p.disconnect(physicsClientId=self.cid)
+              self.cid = -1
         else:
             print("does not own physics client id")
 
@@ -152,7 +152,7 @@ class PlayTableSimEnv(gym.Env):
             if "rgb_static" not in rgb_obs:
                 log.warning("Environment does not have static camera")
                 return
-            img = rgb_obs["rgb_static"][:, :, ::-1]
+            img = rgb_obs["rgb_static"][:, :, ::-1].copy()
             cv2.imshow("simulation cam", cv2.resize(img, (500, 500)))
             cv2.waitKey(1)
         elif mode == "rgb_array":

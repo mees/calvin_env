@@ -7,7 +7,7 @@ robot_base_position: [-0.34, -0.46, 0.24]
 robot_base_orientation: [0, 0, 0]
 robot_initial_joint_positions: [-1.21779206,  1.03987646,  2.11978261, -2.34205014, -0.87015947, 1.64119353,  0.55344866]
 surfaces:
-  table: [[0.0, -0.15, 0.46], [0.35, -0.03, 0.46]]
+  table: [[-0.2, -0.15, 0.46], [0.35, -0.03, 0.46]]
   slider_left: [[-0.32, 0.05, 0.46], [-0.16, 0.12, 0.46]]
   slider_right: [[-0.05, 0.05, 0.46], [0.13, 0.12, 0.46]]
 objects:
@@ -37,15 +37,15 @@ objects:
           link: led_link
           color: [0, 1, 0, 1] # green
   movable_objects:
-    block_red:
-      file: blocks/block_red_middle.urdf
+    block_pink:
+      file: blocks/block_pink_small.urdf
       initial_pos: any
       initial_orn: any
     block_blue:
-      file: blocks/block_blue_small.urdf
+      file: blocks/block_blue_big.urdf
       initial_pos: any
       initial_orn: any
-    block_pink:
-      file: blocks/block_pink_big.urdf
+    block_red:
+      file: blocks/block_red_middle.urdf
       initial_pos: any
       initial_orn: any

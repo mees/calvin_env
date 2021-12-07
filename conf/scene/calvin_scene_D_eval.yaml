@@ -13,7 +13,7 @@ surfaces:
 objects:
   fixed_objects:
     table:
-      file: calvin_table_A/urdf/calvin_table_A.urdf
+      file: calvin_table_D/urdf/calvin_table_D.urdf
       initial_pos: [0, 0, 0]
       initial_orn: [0, 0, 0]
       joints:
