@@ -4,7 +4,7 @@
 
 ## Installation
 ```bash
-git clone --recursive git@github.com:mees/calvin_env.git
+git clone --recursive https://github.com/mees/calvin_env.git
 cd calvin_env/tacto
 pip install -e .
 cd ..
