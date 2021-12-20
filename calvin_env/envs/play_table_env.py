@@ -139,9 +139,12 @@ class PlayTableSimEnv(gym.Env):
     def close(self):
         if self.ownsPhysicsClient:
             print("disconnecting id %d from server" % self.cid)
-            if self.cid >= 0:
-              self.p.disconnect(physicsClientId=self.cid)
-              self.cid = -1
+            if self.cid >= 0 and self.p is not None:
+                try:
+                    self.p.disconnect(physicsClientId=self.cid)
+                except TypeError:
+                    pass
+
         else:
             print("does not own physics client id")
 
@@ -284,7 +287,7 @@ def get_env(dataset_path, obs_space=None, show_gui=True, **kwargs):
 
 
 @hydra.main(config_path="../../conf", config_name="config_data_collection")
-def test_env(cfg):
+def run_env(cfg):
     env = hydra.utils.instantiate(cfg.env, show_gui=True, use_vr=False, use_scene_info=True)
 
     # workspace = np.array([[-0.05, 0.05, 0.46], [0.13, 0.12, 0.46]])
@@ -300,6 +303,7 @@ def test_env(cfg):
         # env.reset()
         # env.render()
         time.sleep(0.01)
+        exit()
 
     # dir = '/tmp/recordings/16-29-36'
     # for i in range(200):
@@ -312,4 +316,4 @@ def test_env(cfg):
 
 
 if __name__ == "__main__":
-    test_env()
+    run_env()
