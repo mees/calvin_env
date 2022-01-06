@@ -31,15 +31,15 @@ class GripperCamera(Camera):
         cam_rot = np.array(cam_rot).reshape(3, 3)
         cam_rot_y, cam_rot_z = cam_rot[:, 1], cam_rot[:, 2]
         # camera: eye position, target position, up vector
-        view_matrix = p.computeViewMatrix(camera_pos, camera_pos + cam_rot_y, -cam_rot_z)
-        projection_matrix = p.computeProjectionMatrixFOV(
+        self.view_matrix = p.computeViewMatrix(camera_pos, camera_pos + cam_rot_y, -cam_rot_z)
+        self.projection_matrix = p.computeProjectionMatrixFOV(
             fov=self.fov, aspect=self.aspect, nearVal=self.nearval, farVal=self.farval
         )
         image = p.getCameraImage(
             width=self.width,
             height=self.height,
-            viewMatrix=view_matrix,
-            projectionMatrix=projection_matrix,
+            viewMatrix=self.view_matrix,
+            projectionMatrix=self.projection_matrix,
             physicsClientId=self.cid,
         )
         rgb_img, depth_img = self.process_rgbd(image, self.nearval, self.farval)

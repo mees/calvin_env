@@ -277,7 +277,7 @@ void EGLOpenGLWindow::createWindow(const b3gWindowConstructionInfo& ci)
 
     eglQueryDeviceAttribEXT(egl_devices[m_data->m_renderDevice], EGL_CUDA_DEVICE_NV, &cudaIndex);
     if (eglGetError() == EGL_SUCCESS) {
-    	printf("CUDA_DEVICE=%d\n" ,cudaIndex);
+    	printf("CUDA_DEVICE=%d\n" , (int) cudaIndex);
     }
 	const GLubyte* ren = glGetString(GL_RENDERER);
 	printf("GL_RENDERER=%s\n", ren);
