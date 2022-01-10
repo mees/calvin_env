@@ -70,7 +70,7 @@ class PlayTableSimEnv(gym.Env):
             )
             for name in cameras
         ]
-        log.info(f"Using VREnv with commit {get_git_commit_hash(Path(calvin_env.__file__))}.")
+        log.info(f"Using calvin_env with commit {get_git_commit_hash(Path(calvin_env.__file__))}.")
 
     def __del__(self):
         self.close()

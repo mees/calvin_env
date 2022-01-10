@@ -38,7 +38,7 @@ class PlayLMPWrapper(gym.Wrapper):
             logger.warning(
                 "Couldn't find correct EGL device. Setting EGL_VISIBLE_DEVICE=0. "
                 "When using DDP with many GPUs this can lead to OOM errors. "
-                "Did you install PyBullet correctly? Please refer to VREnv README"
+                "Did you install PyBullet correctly? Please refer to calvin env README"
             )
             egl_id = 0
         os.environ["EGL_VISIBLE_DEVICES"] = str(egl_id)

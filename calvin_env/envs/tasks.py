@@ -54,22 +54,30 @@ class Tasks:
 
     @staticmethod
     def rotate_object(
-        obj_name, z_degrees, x_y_threshold=30, z_threshold=180, movement_threshold=0.1, start_info=None, end_info=None
+            obj_name, z_degrees, x_y_threshold=30, z_threshold=180, movement_threshold=0.1, start_info=None,
+            end_info=None
     ):
         """
         Returns True if the object with obj_name was rotated more than z_degrees degrees around the z-axis while not
         being rotated more than x_y_threshold degrees around the x or y axis.
         z_degrees is negative for clockwise rotations and positive for counter-clockwise rotations.
         """
-        start_orn = R.from_quat(start_info["scene_info"]["movable_objects"][obj_name]["current_orn"])
-        end_orn = R.from_quat(end_info["scene_info"]["movable_objects"][obj_name]["current_orn"])
+        obj_start_info = start_info["scene_info"]["movable_objects"][obj_name]
+        obj_end_info = end_info["scene_info"]["movable_objects"][obj_name]
+        start_orn = R.from_quat(obj_start_info["current_orn"])
+        end_orn = R.from_quat(obj_end_info["current_orn"])
         rotation = end_orn * start_orn.inv()
         x, y, z = rotation.as_euler("xyz", degrees=True)
 
-        start_pos = np.array(start_info["scene_info"]["movable_objects"][obj_name]["current_pos"])
-        end_pos = np.array(end_info["scene_info"]["movable_objects"][obj_name]["current_pos"])
+        start_pos = np.array(obj_start_info["current_pos"])
+        end_pos = np.array(obj_end_info["current_pos"])
         pos_diff = end_pos - start_pos
         if np.linalg.norm(pos_diff) > movement_threshold:
+            return False
+
+        end_contacts = set(c[2] for c in obj_end_info["contacts"])
+        robot_uid = {start_info["robot_info"]["uid"]}
+        if len(end_contacts - robot_uid) == 0:
             return False
 
         if z_degrees > 0:
