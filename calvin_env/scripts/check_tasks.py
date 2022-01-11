@@ -41,9 +41,9 @@ def noise(action, pos_std=0.01, rot_std=1):
 def run_env(cfg):
     env = hydra.utils.instantiate(cfg.env, show_gui=True, use_vr=False, use_scene_info=True)
 
-    root_dir = Path("/tmp/calvin_abcd_example")
+    root_dir = Path(__file__).parents[3] / "dataset/task_D_D/training"
 
-    ep_start_end_ids = [[100000, 100999]]
+    ep_start_end_ids = np.sort(np.load(root_dir / "ep_start_end_ids.npy"), axis=0)
 
     seq_len = 32
     tasks = hydra.utils.instantiate(cfg.tasks)
@@ -58,7 +58,7 @@ def run_env(cfg):
             # static_img = data["rgb_static"]
             # cv2.imshow("static", static_img[:, :, ::-1])
             # print(data["robot_obs"])
-            env.render()
+            # env.render()
             env.reset(scene_obs=data["scene_obs"], robot_obs=data["robot_obs"])
             start_info = env.get_info()
             cv2.imshow("keylistener", np.zeros((300, 300)))

@@ -290,30 +290,11 @@ def get_env(dataset_path, obs_space=None, show_gui=True, **kwargs):
 def run_env(cfg):
     env = hydra.utils.instantiate(cfg.env, show_gui=True, use_vr=False, use_scene_info=True)
 
-    # workspace = np.array([[-0.05, 0.05, 0.46], [0.13, 0.12, 0.46]])
-    # half_extents = (workspace[1] - workspace[0]) / 2
-    # pos = workspace[0] + half_extents
-    # ws_limit_id = p.createVisualShape(
-    #     shapeType=p.GEOM_BOX, rgbaColor=[0, 1, 0, 0.5], halfExtents=half_extents, visualFramePosition=pos
-    # )
-    # p.createMultiBody(baseVisualShapeIndex=ws_limit_id)
     env.reset()
     while True:
-        p.stepSimulation()
-        # env.reset()
+        env.step(np.array((0.,0,0, 0,0,0, 1)))
         # env.render()
         time.sleep(0.01)
-        exit()
-
-    # dir = '/tmp/recordings/16-29-36'
-    # for i in range(200):
-    #     with open(os.path.join(dir, f"action_{i}.pickle"), 'rb') as file:
-    #         action = pickle.load(file)
-    #     env.step(action)
-    #     for i in range(7):
-    #         p.stepSimulation()
-    #         time.sleep(0.01)
-
 
 if __name__ == "__main__":
     run_env()

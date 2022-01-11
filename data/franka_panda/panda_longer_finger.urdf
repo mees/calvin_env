@@ -344,10 +344,6 @@
     </joint>
 
 	 <link name="gripper_cam">
-		<contact>
-			<spinning_friction value="0.1"/>
-			<lateral_friction value="0.8"/>
-		 </contact>
 		<inertial>
 			<origin rpy="0 0 0" xyz="0 0.0 0.0"/>
 			<mass value="0.2"/>
@@ -362,13 +358,6 @@
 		  <material name="panda_white"/>
 		</visual>
 
-		<collision>
-		  <origin rpy="0 0 0" xyz="0 0 0"/>
-		  <geometry>
-			<box size=".08 .025 0.01"/>
-		  </geometry>
-		  <material name="panda_white"/>
-		</collision>
 	 </link>
 
 	<joint name="tcp_joint" type='fixed'>

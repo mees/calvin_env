@@ -12,7 +12,7 @@ defaults:
   - cameras: no_cameras
   - vr_input: vr_input
   - env: play_table_env
-  - scene: calvin_scene_A
+  - scene: calvin_scene_D
   - robot: panda_longer_finger
   - tasks: new_playtable_tasks
   - recorder: recorder
