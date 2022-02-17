@@ -33,6 +33,8 @@ class Robot:
         max_velocity,
         use_ik_fast,
         euler_obs,
+        lower_joint_limits=(-2.8973, -1.7628, -2.8973, -3.0718, -2.8973, -0.0175, -2.8973),
+        upper_joint_limits=(2.8973, 1.7628, 2.8973, -0.0698, 2.8973, 3.7525, 2.8973),
         max_rel_pos=0.02,
         max_rel_orn=0.05,
         magic_scaling_factor_pos=1,
@@ -61,8 +63,8 @@ class Robot:
         self.end_effector_link_id = end_effector_link_id
         self.gripper_action = 1
         self.ll = self.ul = self.jr = self.rp = None
-        self.ll_real = np.array([-2.8973, -1.7628, -2.8973, -3.0718, -2.8973, -0.0175, -2.8973])
-        self.ul_real = np.array([2.8973, 1.7628, 2.8973, -0.0698, 2.8973, 3.7525, 2.8973])
+        self.ll_real = np.array(lower_joint_limits)
+        self.ul_real = np.array(upper_joint_limits)
         self.mixed_ik = None
         self.euler_obs = euler_obs
         self.max_rel_pos = max_rel_pos

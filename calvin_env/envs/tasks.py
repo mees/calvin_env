@@ -54,8 +54,7 @@ class Tasks:
 
     @staticmethod
     def rotate_object(
-            obj_name, z_degrees, x_y_threshold=30, z_threshold=180, movement_threshold=0.1, start_info=None,
-            end_info=None
+        obj_name, z_degrees, x_y_threshold=30, z_threshold=180, movement_threshold=0.1, start_info=None, end_info=None
     ):
         """
         Returns True if the object with obj_name was rotated more than z_degrees degrees around the z-axis while not
@@ -101,14 +100,13 @@ class Tasks:
         end_pos = np.array(obj_end_info["current_pos"])
         pos_diff = end_pos - start_pos
 
-        start_contacts = set(c[2] for c in obj_start_info["contacts"])
-        end_contacts = set(c[2] for c in obj_end_info["contacts"])
-        robot_uid = {start_info["robot_info"]["uid"]}
+        robot_uid = start_info["robot_info"]["uid"]
+        # contacts excluding robot
+        start_contacts = set((c[2], c[4]) for c in obj_start_info["contacts"] if c[2] != robot_uid)
+        end_contacts = set((c[2], c[4]) for c in obj_end_info["contacts"] if c[2] != robot_uid)
 
         # computing set difference to check if object had surface contact (excluding robot) at both times
-        surface_contact = len(start_contacts - robot_uid) > 0 and (start_contacts - robot_uid) == (
-            end_contacts - robot_uid
-        )
+        surface_contact = len(start_contacts) > 0 and len(end_contacts) > 0 and start_contacts <= end_contacts
         if not surface_contact:
             return False
 
@@ -152,7 +150,7 @@ class Tasks:
 
         return (
             z_diff > z_direction
-            and robot_uid not in start_contacts
+            # and robot_uid not in start_contacts
             and robot_uid in end_contacts
             and len(end_contacts) == 1
             and surface_criterion
