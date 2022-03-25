@@ -9,6 +9,8 @@ numpy
 numpy-quaternion
 omegaconf
 opencv-python
+pandas
 pybullet
 scipy
-pandas
+rich
+
