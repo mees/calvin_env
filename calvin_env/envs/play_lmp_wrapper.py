@@ -2,7 +2,7 @@ import logging
 import os
 from typing import Any, Dict, Tuple, Union
 
-from calvin_agent.datasets.utils.episode_utils import process_actions, process_depth, process_rgb, process_state
+from calvin_agent.datasets.utils.episode_utils import process_depth, process_rgb, process_state
 import gym
 import numpy as np
 import torch

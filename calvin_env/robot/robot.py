@@ -1,14 +1,9 @@
 import logging
-import math
-import os
 
-import cv2
 import numpy as np
 import pybullet as p
-import quaternion
 
 from calvin_env.robot.mixed_ik import MixedIK
-from calvin_env.utils.utils import timeit
 
 # A logger for this file
 log = logging.getLogger(__name__)

@@ -1,4 +1,3 @@
-from copy import deepcopy
 import logging
 from math import pi
 import os
@@ -19,12 +18,14 @@ import pybullet as p
 import pybullet_utils.bullet_client as bc
 
 import calvin_env
-from calvin_env.utils.utils import FpsController, get_git_commit_hash, timeit
+from calvin_env.utils.utils import FpsController, get_git_commit_hash
 
 # A logger for this file
 log = logging.getLogger(__name__)
 from rich.traceback import install
+
 install(show_locals=True)
+
 
 class PlayTableSimEnv(gym.Env):
     def __init__(
@@ -262,7 +263,7 @@ class PlayTableSimEnv(gym.Env):
         return data["state_obs"], data["done"], data["info"]
 
     def serialize(self):
-        data = {"time": time.time_ns() / (10 ** 9), "robot": self.robot.serialize(), "scene": self.scene.serialize()}
+        data = {"time": time.time_ns() / (10**9), "robot": self.robot.serialize(), "scene": self.scene.serialize()}
         return data
 
 
@@ -294,9 +295,10 @@ def run_env(cfg):
 
     env.reset()
     while True:
-        env.step(np.array((0.,0, 0,0,0, 1)))
+        env.step(np.array((0.0, 0, 0, 0, 0, 1)))
         # env.render()
         time.sleep(0.01)
+
 
 if __name__ == "__main__":
     run_env()

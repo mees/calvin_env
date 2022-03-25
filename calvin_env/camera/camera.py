@@ -46,13 +46,13 @@ class Camera:
     # Reference: world2pixel
     # https://github.com/bulletphysics/bullet3/issues/1952
     def project(self, point):
-        '''
-            Projects a world point in homogeneous coordinates to pixel coordinates
-            Args
-                point: np.array of len 4; indicates the desired point to project
-            Output
-                (x, y): tuple (u, v); pixel coordinates of the projected point
-        '''
+        """
+        Projects a world point in homogeneous coordinates to pixel coordinates
+        Args
+            point: np.array of len 4; indicates the desired point to project
+        Output
+            (x, y): tuple (u, v); pixel coordinates of the projected point
+        """
 
         # reshape to get homogeneus transform
         persp_m = np.array(self.projectionMatrix).reshape((4, 4)).T
@@ -67,16 +67,16 @@ class Camera:
         return (x, y)
 
     def deproject(self, point, depth_img, homogeneous=False):
-        '''
-            Deprojects a pixel point to 3D coordinates
-            Args
-                point: tuple (u, v); pixel coordinates of point to deproject
-                depth_img: np.array; depth image used as reference to generate 3D coordinates
-                homogeneous: bool; if true it returns the 3D point in homogeneous coordinates,
-                             else returns the world coordinates (x, y, z) position
-            Output
-                (x, y): np.array; world coordinates of the deprojected point
-        '''
+        """
+        Deprojects a pixel point to 3D coordinates
+        Args
+            point: tuple (u, v); pixel coordinates of point to deproject
+            depth_img: np.array; depth image used as reference to generate 3D coordinates
+            homogeneous: bool; if true it returns the 3D point in homogeneous coordinates,
+                         else returns the world coordinates (x, y, z) position
+        Output
+            (x, y): np.array; world coordinates of the deprojected point
+        """
         T_world_cam = np.linalg.inv(np.array(self.viewMatrix).reshape((4, 4)).T)
 
         u, v = point
@@ -85,7 +85,7 @@ class Camera:
         x = (u - self.width // 2) * z / foc
         y = -(v - self.height // 2) * z / foc
         z = -z
-        world_pos = (T_world_cam @ np.array([x, y, z, 1]))
-        if(not homogeneous):
+        world_pos = T_world_cam @ np.array([x, y, z, 1])
+        if not homogeneous:
             world_pos = world_pos[:3]
         return world_pos

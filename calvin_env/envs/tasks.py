@@ -5,8 +5,6 @@ import numpy as np
 from omegaconf import ListConfig
 from scipy.spatial.transform import Rotation as R
 
-from calvin_env.utils.utils import timeit
-
 
 class Tasks:
     def __init__(self, tasks):

@@ -33,7 +33,7 @@ def timeit(method):
 
 class FpsController:
     def __init__(self, freq):
-        self.loop_time = (1.0 / freq) * 10 ** 9
+        self.loop_time = (1.0 / freq) * 10**9
         self.prev_time = time.time_ns()
 
     def step(self):

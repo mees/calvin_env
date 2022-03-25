@@ -1,15 +1,9 @@
-from copy import deepcopy
-import glob
-import os
 from pathlib import Path
-import time
 
 import cv2
 import hydra
 import numpy as np
 import pybullet as p
-
-from calvin_env.envs.tasks import Tasks
 
 """
 This script loads a rendered episode and replays it using the recorded actions.
