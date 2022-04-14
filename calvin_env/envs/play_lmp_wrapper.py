@@ -53,7 +53,9 @@ class PlayLMPWrapper(gym.Wrapper):
         rgb_obs.update({"rgb_obs": {k: v.to(self.device).unsqueeze(0) for k, v in rgb_obs["rgb_obs"].items()}})
         depth_obs.update({"depth_obs": {k: v.to(self.device).unsqueeze(0) for k, v in depth_obs["depth_obs"].items()}})
 
-        return {**rgb_obs, **state_obs, **depth_obs}
+        obs_dict = {**rgb_obs, **state_obs, **depth_obs}
+        obs_dict["robot_obs_raw"] = torch.from_numpy(obs["robot_obs"]).to(self.device)
+        return obs_dict
 
     def step(
         self, action_tensor: torch.Tensor
