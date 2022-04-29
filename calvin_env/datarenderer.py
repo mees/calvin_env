@@ -119,8 +119,8 @@ def save_ep_lens(episode_lengths, num_prev_episodes):
 
 
 def save_step(counter, rgbs, depths, actions, robot_obs, scene_obs, cam_names, **additional_infos):
-    rgb_entries = {f"rgb_{cam_name}": rgbs[i] for i, cam_name in enumerate(cam_names)}
-    depths_entries = {f"depth_{cam_name}": depths[i] for i, cam_name in enumerate(cam_names)}
+    rgb_entries = {f"rgb_{cam_name}": rgbs[f"rgb_{cam_name}"] for i, cam_name in enumerate(cam_names)}
+    depths_entries = {f"depth_{cam_name}": depths[f"depth_{cam_name}"] for i, cam_name in enumerate(cam_names)}
     if actions[-1] == 0:
         actions[-1] = -1
     np.savez_compressed(
