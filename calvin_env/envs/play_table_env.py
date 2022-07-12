@@ -22,9 +22,6 @@ from calvin_env.utils.utils import FpsController, get_git_commit_hash
 
 # A logger for this file
 log = logging.getLogger(__name__)
-from rich.traceback import install
-
-install(show_locals=True)
 
 
 class PlayTableSimEnv(gym.Env):

@@ -12,4 +12,3 @@ opencv-python
 pandas
 pybullet
 scipy
-rich
