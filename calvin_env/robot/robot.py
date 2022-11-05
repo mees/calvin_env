@@ -227,6 +227,7 @@ class Robot:
 
     def relative_to_absolute(self, action):
         assert len(action) == 7
+        action = np.copy(action)
         rel_pos, rel_orn, gripper = np.split(action, [3, 6])
         rel_pos *= self.max_rel_pos * self.magic_scaling_factor_pos
         rel_orn *= self.max_rel_orn * self.magic_scaling_factor_orn
