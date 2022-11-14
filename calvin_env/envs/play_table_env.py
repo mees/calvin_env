@@ -292,7 +292,16 @@ def run_env(cfg):
 
     env.reset()
     while True:
-        env.step(np.array((0.0, 0, 0, 0, 0, 0, 1)))
+        action = {"action": np.array((0., 0, 0, 0, 0, 0, 1)),
+                  "type": "cartesian_rel"}
+        # cartesian actions can also be input directly as numpy arrays
+        # action = np.array((0., 0, 0, 0, 0, 0, 1))
+
+        # relative action in joint space
+        # action = {"action": np.array((0., 0, 0, 0, 0, 0, 0, 1)),
+        #           "type": "joint_rel"}
+
+        env.step(action)
         # env.render()
         time.sleep(0.01)
 

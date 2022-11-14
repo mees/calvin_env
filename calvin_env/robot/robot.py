@@ -243,102 +243,60 @@ class Robot:
             return abs_pos, abs_orn, gripper
 
     def apply_action(self, action):
-        # cv2.imshow("win", np.zeros((300,300)))
-        # k = cv2.waitKey(1) % 255
-        # if k == ord('w'):
-        #     self.base_position[1] += 0.01
-        # elif k == ord('s'):
-        #     self.base_position[1] -= 0.01
-        # elif k == ord('d'):
-        #     self.base_position[0] += 0.01
-        # elif k == ord('a'):
-        #     self.base_position[0] -= 0.01
-        # elif k == ord('e'):
-        #     self.base_position[2] += 0.01
-        # elif k == ord('q'):
-        #     self.base_position[2] -= 0.01
-        # elif k == ord('r'):
-        #     self.initial_joint_positions[0] -= 0.1
-        # elif k == ord('f'):
-        #     self.initial_joint_positions[0] += 0.1
-        # elif k == ord('t'):
-        #     self.initial_joint_positions[1] -= 0.1
-        # elif k == ord('g'):
-        #     self.initial_joint_positions[1] += 0.1
-        # elif k == ord('y'):
-        #     self.initial_joint_positions[2] -= 0.1
-        # elif k == ord('h'):
-        #     self.initial_joint_positions[2] += 0.1
-        # elif k == ord('u'):
-        #     self.initial_joint_positions[3] -= 0.1
-        # elif k == ord('j'):
-        #     self.initial_joint_positions[3] += 0.1
-        # elif k == ord('i'):
-        #     self.initial_joint_positions[4] -= 0.1
-        # elif k == ord('k'):
-        #     self.initial_joint_positions[4] += 0.1
-        # elif k == ord('o'):
-        #     self.initial_joint_positions[5] -= 0.1
-        # elif k == ord('l'):
-        #     self.initial_joint_positions[5] += 0.1
-        # elif k == ord('p'):
-        #     self.initial_joint_positions[6] -= 0.1
-        # elif k == ord(';'):
-        #     self.initial_joint_positions[6] += 0.1
-        # elif k == ord('z'):
-        #     self.reconfigure = not self.reconfigure
-        #     print(f"{self.initial_joint_positions=}")
-        #     print(f"{self.base_position=}")
-        # if k != 254:
-        #     self.initial_joint_positions = np.clip(self.initial_joint_positions, self.ll_real, self.ul_real)
-        #     p.resetBasePositionAndOrientation(self.robot_uid, self.base_position, self.base_orientation, physicsClientId=self.cid)
-        #     self.rp = list(self.initial_joint_positions) + [self.gripper_joint_limits[1]] * 2
-        #     self.mixed_ik.rp = self.rp
-        #     for i, _id in enumerate(self.arm_joint_ids):
-        #         p.resetJointState(self.robot_uid, _id, self.initial_joint_positions[i], physicsClientId=self.cid)
-        #         p.setJointMotorControl2(
-        #             bodyIndex=self.robot_uid,
-        #             jointIndex=_id,
-        #             controlMode=p.POSITION_CONTROL,
-        #             force=self.max_joint_force,
-        #             targetPosition=self.initial_joint_positions[i],
-        #             maxVelocity=self.max_velocity,
-        #             physicsClientId=self.cid,
-        #         )
-        # if self.reconfigure:
-        #     return
-        #
+        jnt_ps = None
+        if isinstance(action, dict):
+            if action["type"] == "joint_rel":
+                current_joint_states = np.array(list(zip(*p.getJointStates(self.robot_uid, self.arm_joint_ids)))[0])
+                assert len(action["action"]) == 8
+                rel_jnt_ps = action["action"][:7]
+                jnt_ps = current_joint_states + rel_jnt_ps
+                self.gripper_action = int(action["action"][-1])
+            elif action["type"] == "joint_abs":
+                assert len(action["action"]) == 8
+                jnt_ps = action["action"][:7]
+                self.gripper_action = int(action["action"][-1])
+            elif action["type"] == "cartesian_rel":
+                assert len(action["action"]) == 7
+                target_ee_pos, target_ee_orn, self.gripper_action = self.relative_to_absolute(action["action"])
+                if len(target_ee_orn) == 3:
+                    target_ee_orn = p.getQuaternionFromEuler(target_ee_orn)
+                jnt_ps = self.mixed_ik.get_ik(target_ee_pos, target_ee_orn)
+            elif action["type"] == "cartesian_abs":
+                if len(action["action"]) == 3:
+                    # if action is a tuple
+                    target_ee_pos, target_ee_orn, self.gripper_action = action["action"]
+                elif len(action["action"]) == 7:
+                    target_ee_pos = action["action"][:3]
+                    target_ee_orn = action["action"][3:6]
+                    self.gripper_action = int(action["action"][-1])
+                elif len(action["action"]) == 8:
+                    target_ee_pos = action["action"][:3]
+                    target_ee_orn = action["action"][3:7]
+                    self.gripper_action = int(action["action"][-1])
+                else:
+                    raise ValueError
+                if len(target_ee_orn) == 3:
+                    target_ee_orn = p.getQuaternionFromEuler(target_ee_orn)
+                jnt_ps = self.mixed_ik.get_ik(target_ee_pos, target_ee_orn)
+        else:
+            if len(action) == 7:
+                action = self.relative_to_absolute(action)
+            target_ee_pos, target_ee_orn, self.gripper_action = action
 
-        if not len(action) == 3:
-            action = self.relative_to_absolute(action)
-        target_ee_pos, target_ee_orn, self.gripper_action = action
-
-        assert len(target_ee_pos) == 3
-        assert len(target_ee_orn) in (3, 4)
-        # automatically transform euler actions to quaternion
-        if len(target_ee_orn) == 3:
-            target_ee_orn = p.getQuaternionFromEuler(target_ee_orn)
+            assert len(target_ee_pos) == 3
+            assert len(target_ee_orn) in (3, 4)
+            # automatically transform euler actions to quaternion
+            if len(target_ee_orn) == 3:
+                target_ee_orn = p.getQuaternionFromEuler(target_ee_orn)
+            jnt_ps = self.mixed_ik.get_ik(target_ee_pos, target_ee_orn)
 
         if not isinstance(self.gripper_action, int) and len(self.gripper_action) == 1:
             self.gripper_action = self.gripper_action[0]
         assert self.gripper_action in (-1, 1)
 
-        # #
-        # cam_rot = p.getMatrixFromQuaternion(target_ee_orn)
-        # cam_rot = np.array(cam_rot).reshape(3, 3)
-        # cam_rot_x, cam_rot_y, cam_rot_z = cam_rot[:, 0], cam_rot[:, 1], cam_rot[:, 2]
-        # p.addUserDebugLine(target_ee_pos, target_ee_pos + cam_rot_x, lineWidth=3, lineColorRGB=[1,0,0])
-        # p.addUserDebugLine(target_ee_pos, target_ee_pos +cam_rot_y, lineWidth=3, lineColorRGB=[0,1,0])
-        # p.addUserDebugLine(target_ee_pos, target_ee_pos +cam_rot_z, lineWidth=3, lineColorRGB=[0,0,1])
-        #
-        # tcp_pos, tcp_orn = p.getLinkState(self.robotId, self.tcp_link_id)[:2]
-        # tcp_euler = p.getEulerFromQuaternion(tcp_orn)
-        # p.addUserDebugLine([0,0,0], target_ee_pos, lineWidth=8, lineColorRGB=[0,1,0])
-        # p.addUserDebugLine([0,0,0], p.getLinkState(self.robot_uid, 6)[4], lineWidth=3, lineColorRGB=[1,0,0])
-        # p.addUserDebugLine([0,0,0], p.getLinkState(self.robot_uid, 13)[4], lineWidth=3, lineColorRGB=[0,1,0])
-        # target_ee_pos, target_ee_orn = self.tcp_to_ee(target_ee_pos, target_ee_orn)
-        # p.addUserDebugLine([0,0,0], target_ee_pos, lineWidth=8, lineColorRGB=[1,0,0])
-        jnt_ps = self.mixed_ik.get_ik(target_ee_pos, target_ee_orn)
+        self.control_motors(jnt_ps)
+
+    def control_motors(self, joint_positions):
         for i in range(self.end_effector_link_id):
             # p.resetJointState(self.robot_uid, i, jnt_ps[i])
             p.setJointMotorControl2(
@@ -346,7 +304,7 @@ class Robot:
                 jointIndex=i,
                 controlMode=p.POSITION_CONTROL,
                 force=self.max_joint_force,
-                targetPosition=jnt_ps[i],
+                targetPosition=joint_positions[i],
                 maxVelocity=self.max_velocity,
                 physicsClientId=self.cid,
             )
