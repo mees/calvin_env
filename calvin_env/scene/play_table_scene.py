@@ -99,12 +99,12 @@ class PlayTableScene:
 
             for door, state in zip(self.doors, door_info):
                 door.reset(state)
+            for light, state in zip(self.lights, light_info):
+                light.reset(state)
             for button, state in zip(self.buttons, button_info):
                 button.reset(state)
             for switch, state in zip(self.switches, switch_info):
                 switch.reset(state)
-            for light, state in zip(self.lights, light_info):
-                light.reset(state)
             for obj, state in zip(self.movable_objects, obj_info):
                 obj.reset(state)
 

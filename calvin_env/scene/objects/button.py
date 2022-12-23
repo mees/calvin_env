@@ -45,7 +45,10 @@ class Button:
             _state,
             physicsClientId=self.cid,
         )
-        self.state = ButtonState.OFF
+        if self.light is not None:
+            self.state = ButtonState(self.light.get_state())
+        else:
+            self.state = ButtonState.OFF
 
     def step(self):
         if self.state == ButtonState.OFF and not self.prev_is_pressed and self._is_pressed:
